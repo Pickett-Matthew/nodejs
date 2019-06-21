@@ -1,24 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Math Submission Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Form Page</title>
 </head>
 <body>
-	<h1>Math Submission Form</h1>
-	<form action="/math" method="get">
-		<select name="operation">
-			<option>Add</option>
-			<option>Subtract</option>
-			<option>Multiply</option>
-			<option>Divide</option>
-		</select>
-
-		<input type="text" name="operand1">
-		<input type="text" name="operand2">
-
-		<br><br>
-		<input type="submit" value="Get Result">
-
-	</form>
+    <form action="/getRate" method="GET">
+        <h1>Please select type of Mail</h1>
+        <select name="type" id="type">
+            <option value="Letters(stamped)">Letters(stamped)</option>
+            <option value="Letters(Metered)">Letters(Metered)</option>
+            <option value="Large Envelopes (flats)">Large Envelopes (flats)</option>
+            <option value="First-Class Package Service-Retail">First-Class Package Service-Retail</option>
+        </select><br>
+        <input type="number" name="weight"><br>
+        <input type="submit">
+    </form>
 </body>
 </html>

@@ -3,60 +3,65 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // tell it to use the public directory as one where static files live
-app.use(express.static(__dirname + '/public'));
+app.use(express.static("public"));
 
-// views is directory for all template files
-app.set('views', __dirname + '/views');
+app.set("views", "views");
 app.set('view engine', 'ejs');
 
-// set up a rule that says requests to "/math" should be handled by the
-// handleMath function below
-app.get('/math', handleMath);
+app.get('/', function(req, res){
+	console.log("root page requested");
 
-// start the server listening
-app.listen(port, function() {
-  console.log('Node app is running on port', port);
+});
+
+app.get("/getRate", function(req, res){
+	console.log("in the render function");
+	var type = req.query.type;
+	var weight = req.query.weight;
+
+	calculateRate(type, weight);
+
+	var price = calculateRate(type, weight);
+
+	res.render("results", {weight:weight, type:type, price:price});
 });
 
 
-/**********************************************************************
- * Ideally the functions below here would go into a different file
- * but for ease of reading this example and seeing all of the pieces
- * they are listed here.
- **********************************************************************/
+app.listen(port, function() {
+	console.log('Node app is running on port', port);
+  });
 
-function handleMath(request, response) {
-	const operation = request.query.operation;
-	const operand1 = Number(request.query.operand1);
-	const operand2 = Number(request.query.operand2);
+function calculateRate(type, weight){
+	var price = 0;
+	var x = 0.15;
 
-	// TODO: Here we should check to make sure we have all the correct parameters
-
-	computeOperation(response, operation, operand1, operand2);
-}
-
-function computeOperation(response, op, left, right) {
-
-	let result = 0;
-
-	if (op == "Add") {
-		result = left + right;
-	} else if (op == "Subtract") {
-		result = left - right;		
-	} else if (op == "Multiply") {
-		result = left * right;
-	} else if (op == "Divide") {
-		result = left / right;
-	} else {
-		// It would be best here to redirect to an "unknown operation"
-		// error page or something similar.
+	switch(type){
+		case "Letters(stamped)":
+			var base = 0.55;
+			price = base + (x * (weight - 1));
+			break;
+		case "Letters(Metered)":
+			var base = 0.50;
+			price = base + (x * (weight - 1));
+			break;
+		case "Large Envelopes (flats)":
+			var base = 1.00;
+			price = base + (x * (weight - 1));
+			break;
+		case "First-Class Package Service-Retail":
+			if(weight < 5){
+				price = 3.66;
+			}
+			else if(weight > 4 && weight < 9){
+				price = 4.39;
+			}
+			else if(weight > 8 && weight < 13){
+				price = 5.19;
+			}
+			else {
+				price = 5.71;
+			}
+			break;
+			default: price = "no valid price";
 	}
-
-	// Set up a JSON object of the values we want to pass along to the EJS result page
-	const params = {operation: op, left: left, right: right, result: result};
-
-	// Render the response, using the EJS page "result.ejs" in the pages directory
-	// Makes sure to pass it the parameters we need.
-	response.render('pages/results', params);
-
+	return price.toFixed(2);
 }
